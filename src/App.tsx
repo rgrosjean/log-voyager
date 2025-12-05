@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   FileText, Search, UploadCloud, Zap, Bug, FileJson, 
-  X, Bookmark, ArrowDown, ArrowUp, Eye, EyeOff, FileSearch, Trash2, MapPin, Menu, Shield, Cpu, HelpCircle, History, Clipboard, Check
+  X, Bookmark, ArrowDown, ArrowUp, Eye, EyeOff, Trash2, MapPin, Menu, Shield, Cpu, HelpCircle, History, Clipboard, Check, Github, Box
 } from 'lucide-react';
 
 /**
- * LOG VIEWER - PRODUCTION BUILD (CDN FIX + PRELOADER)
- * - Dodano Preloader, aby ukryć "Flash of Unstyled Content".
- * - Aplikacja czeka z renderowaniem UI, aż Tailwind CDN się załaduje.
+ * LOG VOYAGER - PRODUCTION BUILD
+ * - Rebranding na "LOG VOYAGER".
+ * - Dodano link do GitHub i Copyright w stopce menu.
+ * - Poprawiono widoczność logo.
  */
 
 const CHUNK_SIZE = 50 * 1024; // 50KB
@@ -90,8 +91,8 @@ const InfoModal = ({ onClose }: { onClose: () => void }) => {
         {/* Header */}
         <div className="p-4 border-b border-white/10 flex justify-between items-center bg-[#161b22]">
           <h3 className="font-bold text-white tracking-wider flex items-center gap-2">
-            <FileSearch size={18} className="text-[#00f3ff]" /> 
-            LOG VIEWER <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-slate-400">PRO</span>
+            <Box size={18} className="text-[#00f3ff]" /> 
+            LOG VOYAGER <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-slate-400">INFO</span>
           </h3>
           <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors"><X size={20} /></button>
         </div>
@@ -119,7 +120,7 @@ const InfoModal = ({ onClose }: { onClose: () => void }) => {
               <div>
                 <h4 className="text-white font-bold mb-2 flex items-center gap-2"><Cpu size={16} className="text-[#00f3ff]" /> The Mission</h4>
                 <p className="text-slate-400 text-xs leading-relaxed">
-                  Log Viewer Pro is a specialized tool engineered for DevOps and Backend Developers who need to analyze massive log files (1GB+) on the go.
+                  Log Voyager is a specialized tool engineered for DevOps and Backend Developers who need to analyze massive log files (1GB+) on the go.
                   Standard mobile editors crash when opening gigabyte-sized files due to RAM limits. This tool solves that.
                 </p>
               </div>
@@ -145,7 +146,7 @@ const InfoModal = ({ onClose }: { onClose: () => void }) => {
               <div className="border-b border-white/5 pb-4">
                 <h4 className="text-white font-bold mb-1 flex items-center gap-2"><HelpCircle size={14} className="text-[#ff00ff]" /> Why not use Notepad?</h4>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Standard editors try to load the whole file into RAM. For a 2GB file, your device will likely freeze or crash. Log Viewer streams the file, using only ~10MB of RAM regardless of file size.
+                  Standard editors try to load the whole file into RAM. For a 2GB file, your device will likely freeze or crash. Log Voyager streams the file, using only ~10MB of RAM regardless of file size.
                 </p>
               </div>
               <div className="border-b border-white/5 pb-4">
@@ -163,7 +164,7 @@ const InfoModal = ({ onClose }: { onClose: () => void }) => {
               <div>
                 <h4 className="text-white font-bold mb-1 flex items-center gap-2"><HelpCircle size={14} className="text-[#ff00ff]" /> Is it free?</h4>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Yes, Log Viewer is a free, open-source tool for the developer community built by hsr88.
+                  Yes, Log Voyager is a free, open-source tool for the developer community.
                 </p>
               </div>
             </div>
@@ -171,8 +172,11 @@ const InfoModal = ({ onClose }: { onClose: () => void }) => {
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-[#161b22] border-t border-white/10 text-center">
-          <p className="text-[10px] text-slate-500 font-mono">v3.3.0 • Built by hsr88</p>
+        <div className="p-4 bg-[#161b22] border-t border-white/10 text-center flex flex-col items-center gap-2">
+          <a href="https://github.com/hsr88/log-voyager" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full">
+            <Github size={20} />
+          </a>
+          <p className="text-[10px] text-slate-500 font-mono">&copy; 2025 logvoyager.cc</p>
         </div>
       </div>
     </div>
@@ -286,16 +290,13 @@ export default function App() {
 
   // --- CDN FIX + PRELOADER ---
   useEffect(() => {
-    // Sprawdzamy czy skrypt już jest (np. po nawigacji)
     if (document.querySelector('script[src="https://cdn.tailwindcss.com"]')) {
       setIsStyleReady(true);
       return;
     }
-
     const script = document.createElement('script');
     script.src = "https://cdn.tailwindcss.com";
     script.async = true;
-    // Ważne: Czekamy aż skrypt się załaduje
     script.onload = () => setIsStyleReady(true);
     document.head.appendChild(script);
   }, []);
@@ -386,7 +387,7 @@ export default function App() {
   if (!isStyleReady) {
     return (
       <div style={{ backgroundColor: '#050505', height: '100vh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00f3ff', fontFamily: 'monospace', fontSize: '14px', letterSpacing: '2px' }}>
-        INITIALIZING UI...
+        LOG VOYAGER...
       </div>
     );
   }
@@ -400,9 +401,9 @@ export default function App() {
         <div className="flex items-center gap-3">
           <button onClick={() => setShowInfoModal(true)} className="p-1.5 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-colors"><Menu size={20} /></button>
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded bg-gradient-to-br from-[#00f3ff] to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(0,243,255,0.3)]"><FileSearch size={18} className="text-black" /></div>
+            <div className="w-8 h-8 rounded bg-gradient-to-br from-[#00f3ff] to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(0,243,255,0.3)]"><Box size={18} className="text-black" /></div>
             <div>
-               <h1 className="text-sm font-bold text-white tracking-wider neon-text">LOG VIEWER <span className="text-[9px] bg-[#ff00ff] text-white px-1 rounded ml-1">PRO</span></h1>
+               <h1 className="text-sm font-bold text-white tracking-wider neon-text">LOG VOYAGER <span className="text-[9px] bg-[#ff00ff] text-white px-1 rounded ml-1">PRO</span></h1>
                {file && <p className="text-[10px] text-[#00f3ff] font-mono">{file.name} ({formatBytes(fileSize)})</p>}
             </div>
           </div>
@@ -449,7 +450,7 @@ export default function App() {
           <div className="flex-1 flex flex-col items-center justify-center p-6 text-center z-10 overflow-y-auto">
             <div className="max-w-xs w-full glass-panel rounded-2xl p-6 border-t border-t-[#00f3ff]/20 shadow-[0_20px_50px_rgba(0,0,0,0.5)] mb-6">
               <div className="mb-4 relative"><div className="absolute inset-0 bg-[#00f3ff] blur-[40px] opacity-10 rounded-full"></div><UploadCloud size={48} className="text-[#00f3ff] mx-auto relative z-10 drop-shadow-[0_0_10px_rgba(0,243,255,0.5)]" /></div>
-              <h2 className="text-xl font-bold text-white mb-2 tracking-tight">UPLOAD FILE</h2>
+              <h2 className="text-xl font-bold text-white mb-2 tracking-tight">LOG VOYAGER</h2>
               <p className="text-xs text-slate-400 mb-6 leading-relaxed">Drop huge log files here.<br/>Local processing. Zero latency.</p>
               
               <div className="grid grid-cols-3 gap-2 mb-6">
