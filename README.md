@@ -40,6 +40,10 @@ When you scroll or jump, the old buffer is discarded, and a new one is read from
 
 This ensures consistent performance whether the file is 5MB or 50GB.
 
+![logvoyager](https://github.com/user-attachments/assets/f3bbc2ed-5c72-432d-9c6c-d397d198f727)
+
+
+
 🐳 Run Locally (Docker)
 
 For enterprise environments with strict security policies (air-gapped networks), you can run Log Voyager as a self-hosted container.
