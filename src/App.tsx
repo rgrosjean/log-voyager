@@ -5,9 +5,9 @@ import {
 } from 'lucide-react';
 
 /**
- * LOG VIEWER - PRODUCTION BUILD (CDN FIX)
- * - Dodano automatyczne ładowanie Tailwind CDN.
- * - Naprawia to problem "braku stylów" na Vercel, gdy build CSS się nie powiedzie.
+ * LOG VIEWER - PRODUCTION BUILD (CDN FIX + PRELOADER)
+ * - Dodano Preloader, aby ukryć "Flash of Unstyled Content".
+ * - Aplikacja czeka z renderowaniem UI, aż Tailwind CDN się załaduje.
  */
 
 const CHUNK_SIZE = 50 * 1024; // 50KB
@@ -278,17 +278,25 @@ export default function App() {
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   
-  // Paste Fallback State
   const [showPasteModal, setShowPasteModal] = useState(false);
+  const [isStyleReady, setIsStyleReady] = useState(false); // State dla Preloadera
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // --- CDN FIX: Automatyczne ładowanie stylów Tailwind w razie awarii builda ---
+  // --- CDN FIX + PRELOADER ---
   useEffect(() => {
+    // Sprawdzamy czy skrypt już jest (np. po nawigacji)
+    if (document.querySelector('script[src="https://cdn.tailwindcss.com"]')) {
+      setIsStyleReady(true);
+      return;
+    }
+
     const script = document.createElement('script');
     script.src = "https://cdn.tailwindcss.com";
     script.async = true;
+    // Ważne: Czekamy aż skrypt się załaduje
+    script.onload = () => setIsStyleReady(true);
     document.head.appendChild(script);
   }, []);
 
@@ -373,6 +381,15 @@ export default function App() {
   const toggleBookmark = (lineNum: number, content: string) => { const newBookmarks = new Map(bookmarks); if (newBookmarks.has(lineNum)) newBookmarks.delete(lineNum); else newBookmarks.set(lineNum, { lineNum, content: content.length > 50 ? content.substring(0, 50) + '...' : content, chunkOffset: currentOffset }); setBookmarks(newBookmarks); };
   const jumpToBookmark = (bookmark: BookmarkData) => { if (bookmark.chunkOffset === currentOffset) { const element = document.getElementById(`line-${bookmark.lineNum}`); if (element) { element.scrollIntoView({ behavior: 'smooth', block: 'center' }); element.classList.add('animate-flash'); setTimeout(() => element.classList.remove('animate-flash'), 1500); } } else { readChunk(bookmark.chunkOffset); setPendingScrollLine(bookmark.lineNum); } setShowBookmarksList(false); };
   const filteredLines = focusMode && searchTerm ? lines.filter(l => l.toLowerCase().includes(searchTerm.toLowerCase())) : lines;
+
+  // --- PRELOADER GUARD ---
+  if (!isStyleReady) {
+    return (
+      <div style={{ backgroundColor: '#050505', height: '100vh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00f3ff', fontFamily: 'monospace', fontSize: '14px', letterSpacing: '2px' }}>
+        INITIALIZING UI...
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#050505] text-slate-300 font-jetbrains h-[100dvh] overflow-hidden flex flex-col tech-grid relative">
